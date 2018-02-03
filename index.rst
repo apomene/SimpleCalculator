@@ -14,8 +14,8 @@ Welcome to Simple Calculator's documentation!
  
 A simple implemantion, using C#, of an even simpler calculator plus simple mathematical expression parser. More precisely the calculator can evaluate mathematical expressions containing:
     Basic opertators: +,-<*,/
+    
     Left and Right parenthesis: (,)spaces
-
 
 Indices and tables
 ==================
