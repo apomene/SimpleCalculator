@@ -7,15 +7,26 @@ using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.Threading;
 using System.Net.Http;
+using System.Data;
 
 namespace SOtests
 {
     class Program
     {
+        static int[] table = new int[80];
+
+        
         static void Main(string[] args)
         {
-            var s = new Solution();
-        }    
+            int numOFEndrow = 20;
+            int numOfStartRow = 31;
+            if (table.Length> numOfStartRow+ numOFEndrow)
+            {
+                var dtNew = table.Select(x => x).Take(numOfStartRow).Skip(numOFEndrow);
+            }
+            Console.ReadLine();
+        }
+                  
     }
 
 
@@ -131,7 +142,8 @@ namespace SOtests
 
             while(sumOfOperators>0)
             {
-
+                //TO DO: -----
+                sumOfOperators--;
             }
 
             return res;
