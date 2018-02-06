@@ -39,7 +39,7 @@ namespace SOtests
         };
 
         Dictionary<string, int> Operators = new Dictionary<string, int>();
-       
+        List<string> _operators = new List<string>();
         public  Solution()
         {
             //although mult has the smae priority with div as well as add with sub, 
@@ -48,6 +48,10 @@ namespace SOtests
             Operators.Add("/", 3);
             Operators.Add("+", 2);
             Operators.Add("-", 1);
+            _operators.Add("*");
+            _operators.Add("/");
+            _operators.Add("+");
+            _operators.Add("-");
         }
 
         public int Calculate(string s)
@@ -130,22 +134,28 @@ namespace SOtests
 
         public string CreateUnitElement(string noParenthesisElement)
         {
-            int sumOfOperators = 0;
-            string res = noParenthesisElement;
-            foreach (var s in noParenthesisElement)
+            //int sumOfOperators = 0;
+             string res = noParenthesisElement;
+            //Dictionary<string, int> _operators = new Dictionary<string, int>();
+            while (res.Length > 1)
             {
-                if (Operators.ContainsKey(s.ToString()))
+                foreach (var s in res)
                 {
-                    sumOfOperators++;
+
+                    if ((s == '*')||(s== '/'))
+                    {
+                        int index = res.IndexOf(s);
+                        res = res.Substring(0, index - 1) + Context.Operation(s.ToString(), res.Substring(index - 1, 1), res.Substring(index + 1, 1)) + res.Substring(index + 2);
+                        //Debug.WriteLine(res);
+                    }
+                    else if (((s == '-')||(s=='+'))&&(!res.Contains("*"))&&(!res.Contains("/")))
+                    {
+                        int index = res.IndexOf(s);
+                        res = res.Substring(0, index - 1) + Context.Operation(s.ToString(), res.Substring(index - 1, 1), res.Substring(index + 1, 1)) + res.Substring(index + 2);
+                       // Debug.WriteLine(res);
+                    }
                 }
-            }
-
-            while(sumOfOperators>0)
-            {
-                //TO DO: -----
-                sumOfOperators--;
-            }
-
+            }         
             return res;
         }
 

@@ -64,7 +64,7 @@ namespace SOtests
     {
         private static Dictionary<string, BasicOperators<string>> _operations = new Dictionary<string, SOtests.BasicOperators<string>>();
 
-        static Context()
+         static Context()
         {
             _operations.Add("+", new Addition());
             _operations.Add("-", new Substraction());
@@ -72,7 +72,7 @@ namespace SOtests
             _operations.Add("/", new Division());
         }
 
-        static string Operation(string operationSymbol,string inputA,string inputB)
+        public static string Operation(string operationSymbol,string inputA,string inputB)
         {
             return _operations[operationSymbol].Operation(inputA, inputB);
         }
