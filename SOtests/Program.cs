@@ -18,13 +18,22 @@ namespace SOtests
         
         static void Main(string[] args)
         {
-            int numOFEndrow = 20;
-            int numOfStartRow = 31;
-            if (table.Length> numOfStartRow+ numOFEndrow)
+            //int numOFEndrow = 20;
+            //int numOfStartRow = 31;
+            //if (table.Length> numOfStartRow+ numOFEndrow)
+            //{
+            //    var dtNew = table.Select(x => x).Take(numOfStartRow).Skip(numOFEndrow);
+            //}
+            
+            var calculator = new Solution();
+            Console.WriteLine("Write your mathematical expressin and press Enter");
+            
+            var input = Console.ReadLine();
+            while (input != "x")
             {
-                var dtNew = table.Select(x => x).Take(numOfStartRow).Skip(numOFEndrow);
+                Console.WriteLine($"result is: {calculator.CalculatorParser(input)}");
+               input = Console.ReadLine();
             }
-            Console.ReadLine();
         }
                   
     }
@@ -86,10 +95,22 @@ namespace SOtests
         }
         #endregion
 
-        public void CalculatorParser(string input)
+        public string CalculatorParser(string input)
         {
             //resebmle mathematical process pf evaluating an expression 
-            ///1st we evaluate parenthesis
+            ///1st we remove parenthesis
+            string res = input;
+            while(res.Length>1)
+            {
+                var inner = InnerElement(res);
+                //res = res.Replace(innner, "placeholder");
+                var unit = CreateUnitElement(inner);
+                if (res.Contains("("))
+                    res = res.Replace($"({inner})", unit);
+                else
+                    res = res.Replace(inner, unit); 
+            }
+            return res;
         }
 
 
@@ -99,7 +120,7 @@ namespace SOtests
             {
                 int startIndex = input.LastIndexOf('(');
                 int endIndex = input.Substring(startIndex).IndexOf(')');
-                return input.Substring(startIndex + 1, endIndex -1);
+                return input.Substring(startIndex + 1, endIndex -1);              
             }
             ///else no parenthesis contained
             return input;

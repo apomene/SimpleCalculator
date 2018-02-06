@@ -61,5 +61,39 @@ namespace Calculator.Tests
             var output = methodTOtest.CreateUnitElement(input);
             Assert.IsTrue(output == "9");
         }
+
+
+        [TestMethod]
+        public void TestCalculator()
+        {
+            ///1st passing test
+            string input = "2+8/2+1*3";
+            //should return 1+2
+            SOtests.Solution methodTOtest = new SOtests.Solution();
+            var output = methodTOtest.CalculatorParser(input);
+            Assert.IsTrue(output == "9");
+        }
+
+        [TestMethod]
+        public void TestCalculator2()
+        {
+            ///1st passing test
+            string input = "(2+8)/2+1*3";
+            //should return 1+2
+            SOtests.Solution methodTOtest = new SOtests.Solution();
+            var output = methodTOtest.CalculatorParser(input);
+            Assert.IsTrue(output == "8");
+        }
+
+        [TestMethod]
+        public void TestCalculator3()
+        {
+            ///1st passing test
+            string input = "(2+7)/(2+1)*3";
+            //should return 1+2
+            SOtests.Solution methodTOtest = new SOtests.Solution();
+            var output = methodTOtest.CalculatorParser(input);
+            Assert.IsTrue(output == "1");
+        }
     }
 }
