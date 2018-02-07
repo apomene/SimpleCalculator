@@ -106,5 +106,30 @@ namespace Calculator.Tests
             var output = methodTOtest.CalculatorParser(input);
             Assert.IsTrue(output == "-1");
         }
+
+        [TestMethod]
+        public void TestCalculator5()
+        {
+            ///1st passing test
+            string input = "2-(5-6)";
+            //should return 1+2
+            SOtests.Solution methodTOtest = new SOtests.Solution();
+            var output = methodTOtest.CalculatorParser(input);
+            Assert.IsTrue(output == "3");
+        }
+
+
+        [TestMethod]
+        public void TestCalculator6()
+        {
+            ///1st passing test
+            string input = "(6)-(8)-(7)+(1+(6))";
+            //should return 1+2
+            SOtests.Solution methodTOtest = new SOtests.Solution();
+            var output = methodTOtest.CalculatorParser(input);
+            Assert.IsTrue(output == "-2");
+        }
+
+       
     }
 }

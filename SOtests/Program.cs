@@ -194,7 +194,11 @@ namespace SOtests
                     else if (((s == '-')&&(res.IndexOf(s)!=0)||(s=='+'))&&(!res.Contains("*"))&&(!res.Contains("/")))
                     {
                         int index = res.IndexOf(s);
-                        
+                        if (res[index+1]=='-'|| res[index + 1] == '+')
+                        {
+                            res = res.Replace(res.Substring(index, 2), ReplaceOperator(res.Substring(index, 2)));
+                            break;
+                        }
                         var r =  GetComponents(res, index);
                         res = r;
                        // res = res.Substring(0, index - 1) + Context.Operation(s.ToString(), res.Substring(index - 1, 1), res.Substring(index + 1, 1)) + res.Substring(index + 2);
