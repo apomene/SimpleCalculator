@@ -169,6 +169,7 @@ namespace SOtests
         {
             ///we define Unit Element as a string that has no left or right parenthesis, 
             ///contains only 1 basic operator and it evaluates to valid int
+            
         }
 
         public string CreateUnitElement(string noParenthesisElement)
@@ -193,6 +194,7 @@ namespace SOtests
                     else if (((s == '-')&&(res.IndexOf(s)!=0)||(s=='+'))&&(!res.Contains("*"))&&(!res.Contains("/")))
                     {
                         int index = res.IndexOf(s);
+                        
                         var r =  GetComponents(res, index);
                         res = r;
                        // res = res.Substring(0, index - 1) + Context.Operation(s.ToString(), res.Substring(index - 1, 1), res.Substring(index + 1, 1)) + res.Substring(index + 2);
@@ -205,6 +207,17 @@ namespace SOtests
 
         
        
+        public string ReplaceOperator(string multiOperators)
+        {
+            if (multiOperators == "-+")
+                return "-";
+            else if (multiOperators == "+-")
+                return "-";
+            else
+                return "+";
+        }
+
+
     }
 
 }
