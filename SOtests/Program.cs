@@ -99,7 +99,7 @@ namespace SOtests
 
         public string GetComponents(string UnitElement,int index)
         {
-            var index1 = UnitElement.IndexOfAny(_operators);
+            var index1 = UnitElement.Substring(0,index).LastIndexOfAny(_operators);
             index1 = index1 < index ? index1+1 : 0;
             var index2 = UnitElement.IndexOfAny(_operators, index+1);
             index2 =index2>-1 ? index2 : UnitElement.Length;
@@ -184,14 +184,17 @@ namespace SOtests
                     if ((s == '*')||(s== '/'))
                     {
                         int index = res.IndexOf(s);
-                        res = GetComponents(res, index);
+                        //res = GetComponents(res, index);
+                        var r = GetComponents(res, index);
+                        res = r;
                         //res = res.Substring(0, index - 1) + Context.Operation(s.ToString(), res.Substring(index - 1, 1), res.Substring(index + 1, 1)) + res.Substring(index + 2);
                         //Debug.WriteLine(res);
                     }
                     else if (((s == '-')||(s=='+'))&&(!res.Contains("*"))&&(!res.Contains("/")))
                     {
                         int index = res.IndexOf(s);
-                        res = GetComponents(res, index);
+                        var r =  GetComponents(res, index);
+                        res = r;
                        // res = res.Substring(0, index - 1) + Context.Operation(s.ToString(), res.Substring(index - 1, 1), res.Substring(index + 1, 1)) + res.Substring(index + 2);
                        // Debug.WriteLine(res);
                     }
