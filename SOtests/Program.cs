@@ -48,7 +48,7 @@ namespace SOtests
         };
 
         Dictionary<string, int> Operators = new Dictionary<string, int>();
-        List<string> _operators = new List<string>();
+        char[] _operators;
         public  Solution()
         {
             //although mult has the smae priority with div as well as add with sub, 
@@ -57,10 +57,7 @@ namespace SOtests
             Operators.Add("/", 3);
             Operators.Add("+", 2);
             Operators.Add("-", 1);
-            _operators.Add("*");
-            _operators.Add("/");
-            _operators.Add("+");
-            _operators.Add("-");
+            _operators = "+-*/".ToCharArray();
         }
 
         public int Calculate(string s)
@@ -94,6 +91,19 @@ namespace SOtests
             return (int.Parse(a) / int.Parse(b)).ToString();
         }
         #endregion
+
+        public string GetComponents(string UnitElement,int index)
+        {
+            var index1 = UnitElement.IndexOfAny(_operators);
+            index1 = index1 < index ? index1+1 : 0;
+            var index2 = UnitElement.IndexOfAny(_operators, index+1);
+            index2 =index2>-1 ? index2 : UnitElement.Length;
+
+            var res = UnitElement.Replace(UnitElement.Substring(index1, index2 - index1), Context.Operation(UnitElement[index].ToString(), UnitElement.Substring(index1, index - index1), UnitElement.Substring(index + 1, index2 - index - 1)));
+            //return Context.Operation(UnitElement[index].ToString(), UnitElement.Substring(index1, index - index1), UnitElement.Substring(index + 1, index2 - index-1));
+            return res;
+        }
+
 
         public string CalculatorParser(string input)
         {
@@ -166,13 +176,15 @@ namespace SOtests
                     if ((s == '*')||(s== '/'))
                     {
                         int index = res.IndexOf(s);
-                        res = res.Substring(0, index - 1) + Context.Operation(s.ToString(), res.Substring(index - 1, 1), res.Substring(index + 1, 1)) + res.Substring(index + 2);
+                        res = GetComponents(res, index);
+                        //res = res.Substring(0, index - 1) + Context.Operation(s.ToString(), res.Substring(index - 1, 1), res.Substring(index + 1, 1)) + res.Substring(index + 2);
                         //Debug.WriteLine(res);
                     }
                     else if (((s == '-')||(s=='+'))&&(!res.Contains("*"))&&(!res.Contains("/")))
                     {
                         int index = res.IndexOf(s);
-                        res = res.Substring(0, index - 1) + Context.Operation(s.ToString(), res.Substring(index - 1, 1), res.Substring(index + 1, 1)) + res.Substring(index + 2);
+                        res = GetComponents(res, index);
+                       // res = res.Substring(0, index - 1) + Context.Operation(s.ToString(), res.Substring(index - 1, 1), res.Substring(index + 1, 1)) + res.Substring(index + 2);
                        // Debug.WriteLine(res);
                     }
                 }

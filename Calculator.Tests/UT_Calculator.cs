@@ -55,11 +55,11 @@ namespace Calculator.Tests
         public void TestCreateUnitElement3()
         {
             ///1st passing test
-            string input = "2+8/2+1*3";
+            string input = "2+18/2+1*3";
             //should return 1+2
             SOtests.Solution methodTOtest = new SOtests.Solution();
             var output = methodTOtest.CreateUnitElement(input);
-            Assert.IsTrue(output == "9");
+            Assert.IsTrue(output == "14");
         }
 
 
@@ -94,6 +94,39 @@ namespace Calculator.Tests
             SOtests.Solution methodTOtest = new SOtests.Solution();
             var output = methodTOtest.CalculatorParser(input);
             Assert.IsTrue(output == "1");
+        }
+
+        [TestMethod]
+        public void TestGetComponents()
+        {
+            ///1st passing test
+            string input = "10+33";
+            //should return 1+2
+            SOtests.Solution methodTOtest = new SOtests.Solution();
+            var output = methodTOtest.GetComponents(input,2);
+            Assert.IsTrue(output == "43");
+        }
+
+        [TestMethod]
+        public void TestGetComponents2()
+        {
+            ///1st passing test
+            string input = "2*10+33";
+            //should return 1+2
+            SOtests.Solution methodTOtest = new SOtests.Solution();
+            var output = methodTOtest.GetComponents(input, 4);
+            Assert.IsTrue(output == "2*43");
+        }
+
+        [TestMethod]
+        public void TestGetComponents3()
+        {
+            ///1st passing test
+            string input = "2*10+633-4*6";
+            //should return 1+2
+            SOtests.Solution methodTOtest = new SOtests.Solution();
+            var output = methodTOtest.GetComponents(input, 4);
+            Assert.IsTrue(output == "2*643-4*6");
         }
     }
 }
