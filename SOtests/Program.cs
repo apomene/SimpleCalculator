@@ -31,7 +31,12 @@ namespace SOtests
             var input = Console.ReadLine();
             while (input != "x")
             {
-                Console.WriteLine($"result is: {calculator.CalculatorParser(input)}");
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+               Console.WriteLine($"result is: {calculator.CalculatorParser(input)}");
+                sw.Stop();
+                var time = sw.Elapsed.TotalMilliseconds;
+                Console.WriteLine($"time spent:{time} ms");
                input = Console.ReadLine();
             }
         }
@@ -107,10 +112,11 @@ namespace SOtests
 
         public string CalculatorParser(string input)
         {
-            //resebmle mathematical process pf evaluating an expression 
-            ///1st we remove parenthesis
-            string res = input;
-            while(res.Length>1)
+            //resebmle mathematical process of evaluating an expression 
+            ///1st we remove spaces
+
+            string res = RemoveSpaces(input);
+            while ((res.Contains("+")) || (res.Contains("-")) || (res.Contains("*")) || (res.Contains("/")))
             {
                 var inner = InnerElement(res);
                 //res = res.Replace(innner, "placeholder");
@@ -130,7 +136,9 @@ namespace SOtests
             {
                 int startIndex = input.LastIndexOf('(');
                 int endIndex = input.Substring(startIndex).IndexOf(')');
-                return input.Substring(startIndex + 1, endIndex -1);              
+                var res = input.Substring(startIndex + 1, endIndex - 1);
+                // return input.Substring(startIndex + 1, endIndex -1); 
+                return res;
             }
             ///else no parenthesis contained
             return input;
@@ -167,8 +175,8 @@ namespace SOtests
         {
             //int sumOfOperators = 0;
              string res = noParenthesisElement;
-            //Dictionary<string, int> _operators = new Dictionary<string, int>();
-            while (res.Length > 1)
+            //Dictionary<string, int> _operators = new Dict0ionary<string, int>();
+            while ((res.Contains("+")) || (res.Contains("-")) || (res.Contains("*")) || (res.Contains("/")))
             {
                 foreach (var s in res)
                 {
