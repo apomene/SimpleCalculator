@@ -116,7 +116,7 @@ namespace SOtests
             ///1st we remove spaces
 
             string res = RemoveSpaces(input);
-            while ((res.Contains("+")) || (res.Contains("-")) || (res.Contains("*")) || (res.Contains("/")))
+            while ((res.Contains("+")) || (res.Contains("-")) || (res.Contains("*")) || (res.Contains("/")) || (res.Contains("(")))
             {
                 var inner = InnerElement(res);
                 //res = res.Replace(innner, "placeholder");
