@@ -116,7 +116,7 @@ namespace SOtests
             ///1st we remove spaces
 
             string res = RemoveSpaces(input);
-            while ((res.Contains("+")) || (res.Contains("-")) || (res.Contains("*")) || (res.Contains("/")) || (res.Contains("(")))
+            while ((res.Contains("+")) || (res.Contains("-")) && (res.IndexOf('-') != 0) || (res.Contains("*")) || (res.Contains("/")) || (res.Contains("(")))
             {
                 var inner = InnerElement(res);
                 //res = res.Replace(innner, "placeholder");
@@ -176,7 +176,7 @@ namespace SOtests
             //int sumOfOperators = 0;
              string res = noParenthesisElement;
             //Dictionary<string, int> _operators = new Dict0ionary<string, int>();
-            while ((res.Contains("+")) || (res.Contains("-")) || (res.Contains("*")) || (res.Contains("/")))
+            while ((res.Contains("+")) || (res.Contains("-")) && (res.IndexOf('-') != 0) || (res.Contains("*")) || (res.Contains("/")))
             {
                 foreach (var s in res)
                 {
@@ -190,7 +190,7 @@ namespace SOtests
                         //res = res.Substring(0, index - 1) + Context.Operation(s.ToString(), res.Substring(index - 1, 1), res.Substring(index + 1, 1)) + res.Substring(index + 2);
                         //Debug.WriteLine(res);
                     }
-                    else if (((s == '-')||(s=='+'))&&(!res.Contains("*"))&&(!res.Contains("/")))
+                    else if (((s == '-')&&(res.IndexOf(s)!=0)||(s=='+'))&&(!res.Contains("*"))&&(!res.Contains("/")))
                     {
                         int index = res.IndexOf(s);
                         var r =  GetComponents(res, index);

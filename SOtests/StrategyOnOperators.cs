@@ -49,7 +49,7 @@ namespace SOtests
     {
         public override string Operation(string a, string b)
         {
-            ///a and b are evaluated to valid int
+            ///a and b are evaluated to valid int           
             return (int.Parse(a) / int.Parse(b)).ToString();
         }
     }

@@ -95,5 +95,16 @@ namespace Calculator.Tests
             var output = methodTOtest.CalculatorParser(input);
             Assert.IsTrue(output == "1");
         }
+
+        [TestMethod]
+        public void TestCalculator4()
+        {
+            ///1st passing test
+            string input = "10-11";
+            //should return 1+2
+            SOtests.Solution methodTOtest = new SOtests.Solution();
+            var output = methodTOtest.CalculatorParser(input);
+            Assert.IsTrue(output == "-1");
+        }
     }
 }
