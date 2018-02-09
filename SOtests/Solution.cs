@@ -15,7 +15,7 @@ namespace LeetCode
         };
 
         Dictionary<string, int> Operators = new Dictionary<string, int>();
-        List<string> _operators = new List<string>();
+        char[] _operators;
         public Solution()
         {
             //although mult has the smae priority with div as well as add with sub, 
@@ -24,50 +24,72 @@ namespace LeetCode
             Operators.Add("/", 3);
             Operators.Add("+", 2);
             Operators.Add("-", 1);
-            _operators.Add("*");
-            _operators.Add("/");
-            _operators.Add("+");
-            _operators.Add("-");
+            _operators = "+-*/".ToCharArray();
         }
 
         public int Calculate(string s)
         {
-            return int.Parse(CalculatorParser(s));
+            string res = RemoveSpaces(s);
+            while (WhileEvaluation(res))
+            {
+                if (NumOfParenthesis(res) == 5)
+                {
+                    string r = res;
+                }
+                var inner = InnerElement(res);
+                //res = res.Replace(innner, "placeholder");
+                var unit = CreateUnitElement(inner);
+                if (res.Contains("("))
+                    res = res.Replace($"({inner})", unit);
+                else
+                    res = res.Replace(inner, unit);
+            }
+            return int.Parse(res);
         }
 
-        #region Basic Operations
-        private string Add(string a, string b)
+        public bool WhileEvaluation(string expression)
         {
-            ///a and b are evaluated to valid int
-            return (int.Parse(a) + int.Parse(b)).ToString();
+            var res1 = NumOfOperants(expression) > 0;
+            var res2 = expression.Contains("(");
+            var res3 = ((NumOfOperants(expression) == 1) && (expression.IndexOf('-') == 0));
+            return (res1 && !res3) || res2;
         }
 
-        private string Sub(string a, string b)
+        public string GetComponents(string UnitElement, int index)
         {
-            ///a and b are evaluated to valid int
-            return (int.Parse(a) - int.Parse(b)).ToString();
+            try
+            {
+               
+                var index1 = UnitElement.Substring(0, index).LastIndexOfAny(_operators);
+                index1 = index1 < index ? index1 + 1 : 0;
+                //we must also take the case where exists negative sign - before
+                index1 = UnitElement[0] == '-' ? index1 - 1 : index1;
+                var index2 = UnitElement.IndexOfAny(_operators, index + 1);
+                index2 = index2 > -1 ? index2 : UnitElement.Length;
+
+                var res = UnitElement.Replace(UnitElement.Substring(index1, index2 - index1), Context.Operation(UnitElement[index].ToString(), UnitElement.Substring(index1, index - index1), UnitElement.Substring(index + 1, index2 - index - 1)));
+                //return Context.Operation(UnitElement[index].ToString(), UnitElement.Substring(index1, index - index1), UnitElement.Substring(index + 1, index2 - index-1));
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"GetComponents Error...UnitElemetn={UnitElement} index={index}...{ex.Message} at {ex.TargetSite}");
+            }
         }
 
-        private string Mult(string a, string b)
-        {
-            ///a and b are evaluated to valid int
-            return (int.Parse(a) * int.Parse(b)).ToString();
-        }
-
-        private string Div(string a, string b)
-        {
-            ///a and b are evaluated to valid int
-            return (int.Parse(a) / int.Parse(b)).ToString();
-        }
-        #endregion
 
         public string CalculatorParser(string input)
         {
             //resebmle mathematical process of evaluating an expression 
-            ///1st we remove parenthesis
-            string res = input;
-            while (res.Length > 1)
+            ///1st we remove spaces
+
+            string res = RemoveSpaces(input);
+            while (WhileEvaluation(res))
             {
+                if (NumOfParenthesis(res) == 10)
+                {
+                    string r = res;
+                }
                 var inner = InnerElement(res);
                 //res = res.Replace(innner, "placeholder");
                 var unit = CreateUnitElement(inner);
@@ -86,7 +108,8 @@ namespace LeetCode
             {
                 int startIndex = input.LastIndexOf('(');
                 int endIndex = input.Substring(startIndex).IndexOf(')');
-                return input.Substring(startIndex + 1, endIndex - 1);
+                var res = input.Substring(startIndex + 1, endIndex - 1);
+                return res;
             }
             ///else no parenthesis contained
             return input;
@@ -109,38 +132,123 @@ namespace LeetCode
             }
             return true;
         }
-        //public void RemoveSpaces(out string input)
-        //{
-        //    // input = input.Replace(" ", "");
-        //}
-        public void EvaluateUnitElement(string unitElement)
-        {
-            ///we define Unit Element as a string that has no left or right parenthesis, 
-            ///contains only 1 basic operator and it evaluates to valid int
-        }
 
         public string CreateUnitElement(string noParenthesisElement)
         {
             //int sumOfOperators = 0;
             string res = noParenthesisElement;
-            //Dictionary<string, int> _operators = new Dictionary<string, int>();
-            while (res.Length > 1)
+            //Dictionary<string, int> _operators = new Dict0ionary<string, int>();
+
+            while (WhileEvaluation(res))
             {
+                
+
+                int afterIndex = 0;
+                if (res[0] == '+')
+                {
+                    res = res.Substring(1); //in case it contains positive sign on start;  
+                }
+                //if (res[0]=='0')
+                //{
+                //    res = res.Substring(1);
+                //}
+                //if((res[0]=='-')&&(res[1]=='0'))
+                //{
+                //    res = res.Remove(1, 1);
+                //}
                 foreach (var s in res)
                 {
-
+                    var resTemp = ReplaceOperator(res);
+                    if (res!=resTemp)
+                    {
+                        res = resTemp;
+                        break;
+                    }
                     if ((s == '*') || (s == '/'))
                     {
-                        int index = res.IndexOf(s);
-                        res = res.Substring(0, index - 1) + Context.Operation(s.ToString(), res.Substring(index - 1, 1), res.Substring(index + 1, 1)) + res.Substring(index + 2);
+                        int index = afterIndex;// res.IndexOf(s);
+                        
+                        var r = GetComponents(res, index);
+                        res = r;
+                        afterIndex = 0;
+                        break;
+                        //res = res.Substring(0, index - 1) + Context.Operation(s.ToString(), res.Substring(index - 1, 1), res.Substring(index + 1, 1)) + res.Substring(index + 2);
                         //Debug.WriteLine(res);
                     }
-                    else if (((s == '-') || (s == '+')) && (!res.Contains("*")) && (!res.Contains("/")))
+                    else if (WhileEvaluation2(s, res, afterIndex))
                     {
-                        int index = res.IndexOf(s);
-                        res = res.Substring(0, index - 1) + Context.Operation(s.ToString(), res.Substring(index - 1, 1), res.Substring(index + 1, 1)) + res.Substring(index + 2);
+                        int index = afterIndex;// res.IndexOf(s);
+                        //if (res[index + 1] == '-' || res[index + 1] == '+')
+                        //{
+                        //    res = res.Replace(res.Substring(index, 2), ReplaceOperator(res.Substring(index, 2)));
+                        //}
+                        //else if (res[index - 1] == '-' || res[index - 1] == '+')
+                        //{
+                        //    res = res.Replace(res.Substring(index-1, 2), ReplaceOperator(res.Substring(index-1, 2)));
+                        //}
+                        var r = GetComponents(res, index);
+                        res = r;
+                        afterIndex = 0;
+                        break;
+                        // res = res.Substring(0, index - 1) + Context.Operation(s.ToString(), res.Substring(index - 1, 1), res.Substring(index + 1, 1)) + res.Substring(index + 2);
                         // Debug.WriteLine(res);
                     }
+                    afterIndex++;
+                }
+            }
+            return res;
+        }
+
+        private bool WhileEvaluation2(char s, string expression, int index)
+        {
+            var res1 = (s == '-') && (index != 0); //it contains substraction as an operation not as a negative int
+            var res2 = (s == '+') && (index != 0); //it contains addition but it is not a positive sign
+            var res3 = (!expression.Contains("*")) && (!expression.Contains("/")); //it does not contain multiplication or division
+            return (res1 || res2) && (res3);
+        }
+
+
+        public string ReplaceOperator(string expression)
+        {
+            var res = expression;
+            res = res.Replace("--", "+");
+            res = res.Replace("-+", "-");
+            res = res.Replace("+-", "-");
+            res = res.Replace("++", "+");
+            return res;
+        }
+
+        public string ReplaceOperatorObsolete(string multiOperators)
+        {
+            if (multiOperators == "-+")
+                return "-";
+            else if (multiOperators == "+-")
+                return "-";
+            else
+                return "+";
+        }
+
+        public int NumOfOperants(string input)
+        {
+            var res = 0;
+            foreach (var s in input)
+            {
+                if (_operators.Contains(s))
+                {
+                    res++;
+                }
+            }
+            return res;
+        }
+
+        public int NumOfParenthesis(string input)
+        {
+            var res = 0;
+            foreach (var s in input)
+            {
+                if (s=='(')
+                {
+                    res++;
                 }
             }
             return res;

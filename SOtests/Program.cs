@@ -29,7 +29,7 @@ namespace SOtests
                     Stopwatch sw = new Stopwatch();
                     sw.Start();
                     //TO DO--- Thread myTimer = new Thread(Action()=>myTiming()).Start;
-                    Console.WriteLine($"result is: {calculator.CalculatorParser(input)}");
+                    Console.WriteLine($"result is: {calculator.Calculate(input)}");
                     sw.Stop();
                     var time = sw.Elapsed.TotalMilliseconds;
                     Console.WriteLine($"time spent:{time} ms");
@@ -82,11 +82,21 @@ namespace SOtests
 
         public int Calculate(string s)
         {
-            //TO DO 
-            return 0;
+            string res = RemoveSpaces(s);
+            while (WhileEvaluation(res))
+            {
+                var inner = InnerElement(res);
+                //res = res.Replace(innner, "placeholder");
+                var unit = CreateUnitElement(inner);
+                if (res.Contains("("))
+                    res = res.Replace($"({inner})", unit);
+                else
+                    res = res.Replace(inner, unit);
+            }
+            return int.Parse(res);
         }
 
-       public bool WhileEvaluation(string expression)
+        public bool WhileEvaluation(string expression)
         {
             var res1 = NumOfOperants(expression) > 0;
             var res2 = expression.Contains("(");
@@ -189,13 +199,8 @@ namespace SOtests
                             res = res.Replace(res.Substring(index, 2), ReplaceOperator(res.Substring(index, 2)));
                             afterIndex = 0;
                             break;
-                        }
-                        // break;
-                        //else if (res[index - 1] == '-' || res[index - 1] == '+')
-                        //{
-                        //    res = res.Replace(res.Substring(index - 1, 2), ReplaceOperator(res.Substring(index - 1, 2)));
-                        //}
-                    }
+                        }                    
+                     }
                     if ((s == '*') || (s == '/'))
                     {
                         int index = afterIndex;// res.IndexOf(s);
@@ -203,8 +208,6 @@ namespace SOtests
                         res = r;
                         afterIndex = 0;
                         break;
-                        //res = res.Substring(0, index - 1) + Context.Operation(s.ToString(), res.Substring(index - 1, 1), res.Substring(index + 1, 1)) + res.Substring(index + 2);
-                        //Debug.WriteLine(res);
                     }                  
                     else if (WhileEvaluation2(s, res, afterIndex))
                     {
