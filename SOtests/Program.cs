@@ -84,10 +84,12 @@ namespace SOtests
             return (res1 && !res3) || res2;
         }
 
-        public string GetComponents(string UnitElement,int index)
+        public string GetComponents(string UnitElement,int index) 
         {
             var index1 = UnitElement.Substring(0,index).LastIndexOfAny(_operators);
             index1 = index1 < index ? index1+1 : 0;
+            //we must also take the case where exists negative sign - before
+            index1 = UnitElement[index1 - 1] == '-' ? index1 - 1 : index1;
             var index2 = UnitElement.IndexOfAny(_operators, index+1);
             index2 =index2>-1 ? index2 : UnitElement.Length;
 
@@ -155,39 +157,61 @@ namespace SOtests
             //Dictionary<string, int> _operators = new Dict0ionary<string, int>();
             while (WhileEvaluation(res))
             {
+                int afterIndex = 0;
+                if (res[0] == '+')
+                {
+                    res = res.Replace("+", ""); //in case it contains positive sign on start;
+                }
+
                 foreach (var s in res)
                 {
-
-                    if ((s == '*')||(s== '/'))
+                    if (s == '-') //we have to check for paterns: +-,--,-+,++
                     {
-                        int index = res.IndexOf(s);
+                        int index = afterIndex;// res.IndexOf(s);
+                        if (res[index + 1] == '-' || res[index + 1] == '+')
+                        {
+                            res = res.Replace(res.Substring(index, 2), ReplaceOperator(res.Substring(index, 2)));
+                             break;
+                        }
+                        // break;
+                        //else if (res[index - 1] == '-' || res[index - 1] == '+')
+                        //{
+                        //    res = res.Replace(res.Substring(index - 1, 2), ReplaceOperator(res.Substring(index - 1, 2)));
+                        //}
+                    }
+                    if ((s == '*') || (s == '/'))
+                    {
+                        int index = afterIndex;//res.IndexOf(s);
                         var r = GetComponents(res, index);
                         res = r;
                         //res = res.Substring(0, index - 1) + Context.Operation(s.ToString(), res.Substring(index - 1, 1), res.Substring(index + 1, 1)) + res.Substring(index + 2);
                         //Debug.WriteLine(res);
-                    }
-                    else if (WhileEvaluation2(s,res))
+                    }                  
+                    else if (WhileEvaluation2(s, res, afterIndex))
                     {
-                        int index = res.IndexOf(s);
-                        if (res[index+1]=='-'|| res[index + 1] == '+')
-                        {
-                            res = res.Replace(res.Substring(index, 2), ReplaceOperator(res.Substring(index, 2)));
-                            //break;
-                        }
-                        var r =  GetComponents(res, index);
+                        int index = afterIndex;// res.IndexOf(s);
+                        //if (res[index + 1] == '-' || res[index + 1] == '+')
+                        //{
+                        //    res = res.Replace(res.Substring(index, 2), ReplaceOperator(res.Substring(index, 2)));
+                        //}
+                        //else if (res[index - 1] == '-' || res[index - 1] == '+')
+                        //{
+                        //    res = res.Replace(res.Substring(index-1, 2), ReplaceOperator(res.Substring(index-1, 2)));
+                        //}
+                        var r = GetComponents(res, index);
                         res = r;
-                       // res = res.Substring(0, index - 1) + Context.Operation(s.ToString(), res.Substring(index - 1, 1), res.Substring(index + 1, 1)) + res.Substring(index + 2);
-                       // Debug.WriteLine(res);
+                        // res = res.Substring(0, index - 1) + Context.Operation(s.ToString(), res.Substring(index - 1, 1), res.Substring(index + 1, 1)) + res.Substring(index + 2);
+                        // Debug.WriteLine(res);
                     }
+                    afterIndex++;
                 }
-            }         
-            return res;
-        }
+            }
+            return res;}
 
-        private bool WhileEvaluation2(char s, string expression)
+        private bool WhileEvaluation2(char s, string expression,int index)
         {
-            var res1 = (s == '-') && (expression.IndexOf(s) != 0); //it contains substraction as an operation not as a negative int
-            var res2 = (s == '+'); //it contains addition
+            var res1 = (s == '-') && (index != 0); //it contains substraction as an operation not as a negative int
+            var res2 = (s == '+') && (index != 0); //it contains addition but it is not a positive sign
             var res3 = (!expression.Contains("*")) && (!expression.Contains("/")); //it does not contain multiplication or division
             return (res1 || res2) && (res3);
         }
