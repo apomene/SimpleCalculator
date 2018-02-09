@@ -17,14 +17,7 @@ namespace SOtests
 
         
         static void Main(string[] args)
-        {
-            //int numOFEndrow = 20;
-            //int numOfStartRow = 31;
-            //if (table.Length> numOfStartRow+ numOFEndrow)
-            //{
-            //    var dtNew = table.Select(x => x).Take(numOfStartRow).Skip(numOFEndrow);
-            //}
-            
+        {                  
             var calculator = new Solution();
             Console.WriteLine("Write your mathematical expressin and press Enter");
             
@@ -33,14 +26,26 @@ namespace SOtests
             {
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
-               Console.WriteLine($"result is: {calculator.CalculatorParser(input)}");
+               //TO DO--- Thread myTimer = new Thread(Action()=>myTiming()).Start;
+                Console.WriteLine($"result is: {calculator.CalculatorParser(input)}");
                 sw.Stop();
                 var time = sw.Elapsed.TotalMilliseconds;
                 Console.WriteLine($"time spent:{time} ms");
-               input = Console.ReadLine();
+                input = Console.ReadLine();
             }
         }
-                  
+
+        private static bool myTiming()
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            while(sw.ElapsedMilliseconds<10*1000)
+            {
+
+            }
+            sw.Stop();
+            return true;
+        }
     }
 
 
@@ -71,31 +76,13 @@ namespace SOtests
             return 0;
         }
 
-        #region Basic Operations
-        private string Add(string a, string b)
+       public bool WhileEvaluation(string expression)
         {
-            ///a and b are evaluated to valid int
-            return (int.Parse(a) + int.Parse(b)).ToString();
+            var res1 = NumOfOperants(expression) > 0;
+            var res2 = expression.Contains("(");
+            var res3 = ((NumOfOperants(expression)== 1) && (expression.IndexOf('-') == 0));
+            return (res1 && !res3) || res2;
         }
-
-        private string Sub(string a, string b)
-        {
-            ///a and b are evaluated to valid int
-            return (int.Parse(a) - int.Parse(b)).ToString();
-        }
-
-        private string Mult(string a, string b)
-        {
-            ///a and b are evaluated to valid int
-            return (int.Parse(a) * int.Parse(b)).ToString();
-        }
-
-        private string Div(string a, string b)
-        {
-            ///a and b are evaluated to valid int
-            return (int.Parse(a) / int.Parse(b)).ToString();
-        }
-        #endregion
 
         public string GetComponents(string UnitElement,int index)
         {
@@ -116,7 +103,7 @@ namespace SOtests
             ///1st we remove spaces
 
             string res = RemoveSpaces(input);
-            while ((res.Contains("+")) || (res.Contains("-")) && (res.IndexOf('-') != 0) || (res.Contains("*")) || (res.Contains("/")) || (res.Contains("(")))
+            while(WhileEvaluation(res))
             {
                 var inner = InnerElement(res);
                 //res = res.Replace(innner, "placeholder");
@@ -137,7 +124,6 @@ namespace SOtests
                 int startIndex = input.LastIndexOf('(');
                 int endIndex = input.Substring(startIndex).IndexOf(')');
                 var res = input.Substring(startIndex + 1, endIndex - 1);
-                // return input.Substring(startIndex + 1, endIndex -1); 
                 return res;
             }
             ///else no parenthesis contained
@@ -161,23 +147,13 @@ namespace SOtests
             }
             return true;
         }
-        //public void RemoveSpaces(out string input)
-        //{
-        //    // input = input.Replace(" ", "");
-        //}
-        public void EvaluateUnitElement(string unitElement)
-        {
-            ///we define Unit Element as a string that has no left or right parenthesis, 
-            ///contains only 1 basic operator and it evaluates to valid int
             
-        }
-
         public string CreateUnitElement(string noParenthesisElement)
         {
             //int sumOfOperators = 0;
              string res = noParenthesisElement;
             //Dictionary<string, int> _operators = new Dict0ionary<string, int>();
-            while ((res.Contains("+")) || (res.Contains("-")) && (res.IndexOf('-') != 0) || (res.Contains("*")) || (res.Contains("/")))
+            while (WhileEvaluation(res))
             {
                 foreach (var s in res)
                 {
@@ -185,19 +161,18 @@ namespace SOtests
                     if ((s == '*')||(s== '/'))
                     {
                         int index = res.IndexOf(s);
-                        //res = GetComponents(res, index);
                         var r = GetComponents(res, index);
                         res = r;
                         //res = res.Substring(0, index - 1) + Context.Operation(s.ToString(), res.Substring(index - 1, 1), res.Substring(index + 1, 1)) + res.Substring(index + 2);
                         //Debug.WriteLine(res);
                     }
-                    else if (((s == '-')&&(res.IndexOf(s)!=0)||(s=='+'))&&(!res.Contains("*"))&&(!res.Contains("/")))
+                    else if (WhileEvaluation2(s,res))
                     {
                         int index = res.IndexOf(s);
                         if (res[index+1]=='-'|| res[index + 1] == '+')
                         {
                             res = res.Replace(res.Substring(index, 2), ReplaceOperator(res.Substring(index, 2)));
-                            break;
+                            //break;
                         }
                         var r =  GetComponents(res, index);
                         res = r;
@@ -209,8 +184,14 @@ namespace SOtests
             return res;
         }
 
-        
-       
+        private bool WhileEvaluation2(char s, string expression)
+        {
+            var res1 = (s == '-') && (expression.IndexOf(s) != 0); //it contains substraction as an operation not as a negative int
+            var res2 = (s == '+'); //it contains addition
+            var res3 = (!expression.Contains("*")) && (!expression.Contains("/")); //it does not contain multiplication or division
+            return (res1 || res2) && (res3);
+        }
+
         public string ReplaceOperator(string multiOperators)
         {
             if (multiOperators == "-+")
@@ -219,6 +200,19 @@ namespace SOtests
                 return "-";
             else
                 return "+";
+        }
+
+        public int NumOfOperants(string input)
+        {
+            var res = 0;
+            foreach(var s in input)
+            {
+                if (_operators.Contains(s))
+                {
+                    res++;
+                }
+            }
+            return res;
         }
 
 

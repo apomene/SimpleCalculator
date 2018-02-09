@@ -17,7 +17,6 @@ namespace Calculator.Tests
             Assert.IsTrue(output == "1+2");
         }
 
-
         [TestMethod]
         public void testInnerElementMethod2()
         {
@@ -62,7 +61,6 @@ namespace Calculator.Tests
             Assert.IsTrue(output == "14");
         }
 
-
         [TestMethod]
         public void TestCalculator()
         {
@@ -93,7 +91,7 @@ namespace Calculator.Tests
             //should return 1+2
             SOtests.Solution methodTOtest = new SOtests.Solution();
             var output = methodTOtest.CalculatorParser(input);
-            Assert.IsTrue(output == "1");
+            Assert.IsTrue(output == "9");
         }
 
         [TestMethod]
@@ -130,6 +128,18 @@ namespace Calculator.Tests
             Assert.IsTrue(output == "-2");
         }
 
-       
+        [TestMethod]
+        public void TestWhileEvaluation1()
+        {
+            ///1st passing test
+            string input = "345";
+            //should return 1+2
+            SOtests.Solution methodTOtest = new SOtests.Solution();
+            var output = methodTOtest.WhileEvaluation(input);
+            Assert.IsTrue(!output);
+        }
+
+
+
     }
 }
