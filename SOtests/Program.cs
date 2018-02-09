@@ -24,15 +24,25 @@ namespace SOtests
             var input = Console.ReadLine();
             while (input != "x")
             {
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
-               //TO DO--- Thread myTimer = new Thread(Action()=>myTiming()).Start;
-                Console.WriteLine($"result is: {calculator.CalculatorParser(input)}");
-                sw.Stop();
-                var time = sw.Elapsed.TotalMilliseconds;
-                Console.WriteLine($"time spent:{time} ms");
-                input = Console.ReadLine();
+                try
+                {
+                    Stopwatch sw = new Stopwatch();
+                    sw.Start();
+                    //TO DO--- Thread myTimer = new Thread(Action()=>myTiming()).Start;
+                    Console.WriteLine($"result is: {calculator.CalculatorParser(input)}");
+                    sw.Stop();
+                    var time = sw.Elapsed.TotalMilliseconds;
+                    Console.WriteLine($"time spent:{time} ms");
+                    input = Console.ReadLine();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                    break;
+                }
+              
             }
+            Console.ReadLine();
         }
 
         private static bool myTiming()
@@ -86,16 +96,23 @@ namespace SOtests
 
         public string GetComponents(string UnitElement,int index) 
         {
-            var index1 = UnitElement.Substring(0,index).LastIndexOfAny(_operators);
-            index1 = index1 < index ? index1+1 : 0;
-            //we must also take the case where exists negative sign - before
-            index1 = UnitElement[index1 - 1] == '-' ? index1 - 1 : index1;
-            var index2 = UnitElement.IndexOfAny(_operators, index+1);
-            index2 =index2>-1 ? index2 : UnitElement.Length;
+            try
+            {
+                var index1 = UnitElement.Substring(0, index).LastIndexOfAny(_operators);
+                index1 = index1 < index ? index1 + 1 : 0;
+                //we must also take the case where exists negative sign - before
+                index1 = UnitElement[0] == '-' ? index1 - 1 : index1;
+                var index2 = UnitElement.IndexOfAny(_operators, index + 1);
+                index2 = index2 > -1 ? index2 : UnitElement.Length;
 
-            var res = UnitElement.Replace(UnitElement.Substring(index1, index2 - index1), Context.Operation(UnitElement[index].ToString(), UnitElement.Substring(index1, index - index1), UnitElement.Substring(index + 1, index2 - index - 1)));
-            //return Context.Operation(UnitElement[index].ToString(), UnitElement.Substring(index1, index - index1), UnitElement.Substring(index + 1, index2 - index-1));
-            return res;
+                var res = UnitElement.Replace(UnitElement.Substring(index1, index2 - index1), Context.Operation(UnitElement[index].ToString(), UnitElement.Substring(index1, index - index1), UnitElement.Substring(index + 1, index2 - index - 1)));
+                //return Context.Operation(UnitElement[index].ToString(), UnitElement.Substring(index1, index - index1), UnitElement.Substring(index + 1, index2 - index-1));
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"GetComponents Error...UnitElemetn={UnitElement} index={index}...{ex.Message} at {ex.TargetSite}");
+            }
         }
 
 
@@ -160,18 +177,18 @@ namespace SOtests
                 int afterIndex = 0;
                 if (res[0] == '+')
                 {
-                    res = res.Replace("+", ""); //in case it contains positive sign on start;
+                    res = res.Substring(1); //in case it contains positive sign on start;                  
                 }
-
                 foreach (var s in res)
                 {
                     if (s == '-') //we have to check for paterns: +-,--,-+,++
                     {
-                        int index = afterIndex;// res.IndexOf(s);
+                        int index = res.IndexOf(s);
                         if (res[index + 1] == '-' || res[index + 1] == '+')
                         {
                             res = res.Replace(res.Substring(index, 2), ReplaceOperator(res.Substring(index, 2)));
-                             break;
+                            afterIndex = 0;
+                            break;
                         }
                         // break;
                         //else if (res[index - 1] == '-' || res[index - 1] == '+')
@@ -181,9 +198,11 @@ namespace SOtests
                     }
                     if ((s == '*') || (s == '/'))
                     {
-                        int index = afterIndex;//res.IndexOf(s);
+                        int index = afterIndex;// res.IndexOf(s);
                         var r = GetComponents(res, index);
                         res = r;
+                        afterIndex = 0;
+                        break;
                         //res = res.Substring(0, index - 1) + Context.Operation(s.ToString(), res.Substring(index - 1, 1), res.Substring(index + 1, 1)) + res.Substring(index + 2);
                         //Debug.WriteLine(res);
                     }                  
@@ -200,6 +219,8 @@ namespace SOtests
                         //}
                         var r = GetComponents(res, index);
                         res = r;
+                        afterIndex = 0;
+                        break;
                         // res = res.Substring(0, index - 1) + Context.Operation(s.ToString(), res.Substring(index - 1, 1), res.Substring(index + 1, 1)) + res.Substring(index + 2);
                         // Debug.WriteLine(res);
                     }
